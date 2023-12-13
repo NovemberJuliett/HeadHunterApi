@@ -4,22 +4,16 @@ from pprint import pprint
 languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
 base_url = "https://api.hh.ru/vacancies"
 
-languages_dict = {}
-for language in languages_list:
-    params = {"area": "1",
-              "text": f"{language}"}
-    response = requests.get(base_url, params=params)
-    count = response.json()
-    languages_dict[language] = count["found"]
+
+salary_info_dict = {}
 
 
-def predict_rub_salary(vacancy):
-    response = requests.get(vacancy)
+def predict_rub_salary(url):
+    response = requests.get(url)
     vacancy_features = response.json()["items"]
     for feature in vacancy_features:
         salary = feature["salary"]
         if not salary:
-            print(None)
             continue
         salary_from = salary["from"]
         salary_to = salary["to"]
@@ -35,6 +29,17 @@ def predict_rub_salary(vacancy):
                 print(from_rate)
             if salary["currency"] != "RUR":
                 print(None)
+    for language in languages_list:
+        params = {"area": "1",
+                  "text": f"{language}"}
+        response = requests.get(base_url, params=params)
+        vacancy = response.url
+        count = response.json()
+        salary_info_dict[language] = {"vacancies_found": count["found"]},
+                                      # "vacancies_processed": predict_rub_salary(vacancy)
+
+print(salary_info_dict)
 
 
-predict_rub_salary("https://api.hh.ru/vacancies?area=1&text=Python")
+
+# predict_rub_salary("https://api.hh.ru/vacancies?area=1&text=Python")

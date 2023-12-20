@@ -5,10 +5,9 @@ languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go",
 base_url = "https://api.hh.ru/vacancies"
 
 
-salary_info_dict = {}
-
-
 def predict_rub_salary(url):
+    average_list = []
+    processed_count = 0
     response = requests.get(url)
     vacancy_features = response.json()["items"]
     for feature in vacancy_features:
@@ -19,27 +18,31 @@ def predict_rub_salary(url):
         salary_to = salary["to"]
         if salary_from and salary_to:
             average = (salary_from + salary_to) / 2
-            print(average)
+            average_list.append(average)
+            processed_count += 1
         else:
             if not salary_from:
                 to_rate = salary_to * 0.8
-                print(to_rate)
             if not salary_to:
                 from_rate = salary_from * 1.2
-                print(from_rate)
-            if salary["currency"] != "RUR":
-                print(None)
-    for language in languages_list:
-        params = {"area": "1",
-                  "text": f"{language}"}
-        response = requests.get(base_url, params=params)
-        vacancy = response.url
-        count = response.json()
-        salary_info_dict[language] = {"vacancies_found": count["found"]},
-                                      # "vacancies_processed": predict_rub_salary(vacancy)
+    sum = 0
+    for element in average_list:
+        sum += element
+    average_salary = sum/len(average_list)
+    return processed_count, int(average_salary)
 
+
+salary_info_dict = {}
+for language in languages_list:
+    params = {"area": "1",
+              "text": f"{language}"}
+    language_response = requests.get(base_url, params=params)
+    vacancy = language_response.url
+    count = language_response.json()
+    vacancy_number, average_salary = predict_rub_salary(vacancy)
+    salary_info_dict[language] = {"vacancies_found": count["found"],
+                                  "vacancies_processed": vacancy_number,
+                                  "average_salary": average_salary}
 print(salary_info_dict)
 
-
-
-# predict_rub_salary("https://api.hh.ru/vacancies?area=1&text=Python")
+# print(predict_rub_salary("https://api.hh.ru/vacancies?area=1&text=JavaScript"))

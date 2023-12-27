@@ -46,11 +46,14 @@ def get_salary_statistics(name):
             for element in average_list:
                 elements_sum += element
     average_salary = int(elements_sum / len(average_list))
-    salary_info_dict[name] = {"vacancies_found": total_number,
-                                      "vacancies_processed": processed_count,
-                                      "average_salary": average_salary
-                                      }
-    return salary_info_dict
+    salary_info = {"vacancies_found": total_number,
+                   "vacancies_processed": processed_count,
+                   "average_salary": average_salary
+                   }
+    return salary_info
 
 
-print(get_salary_statistics("Shell"))
+result_languages_salary = {}
+for language in languages_list:
+    result_languages_salary[language] = get_salary_statistics(language)
+print(result_languages_salary)

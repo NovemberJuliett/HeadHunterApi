@@ -28,7 +28,6 @@ def get_salary_statistics(name):
             break
         total_number = total_number + number_of_vacancies
         page += 1
-        print(page)
         for vacancy in list_vacancies:
             salary = vacancy["salary"]
             if not salary:
@@ -36,16 +35,16 @@ def get_salary_statistics(name):
             salary_from = salary["from"]
             salary_to = salary["to"]
             if salary_from and salary_to:
-                average = (salary_from + salary_to) / 2
-                average_list.append(average)
-            processed_count += 1
+                expected_salary = (salary_from + salary_to) / 2
             if not salary_from:
-                average = salary_to * 0.8
+                expected_salary = salary_to * 0.8
             if not salary_to:
-                average = salary_from * 1.2
-        elements_sum = 0
-        for element in average_list:
-            elements_sum += element
+                expected_salary = salary_from * 1.2
+            average_list.append(expected_salary)
+            processed_count += 1
+            elements_sum = 0
+            for element in average_list:
+                elements_sum += element
     average_salary = int(elements_sum / len(average_list))
     salary_info_dict[name] = {"vacancies_found": total_number,
                                       "vacancies_processed": processed_count,

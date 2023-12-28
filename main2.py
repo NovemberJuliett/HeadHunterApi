@@ -6,9 +6,25 @@ languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go",
 base_url = "https://api.hh.ru/vacancies"
 
 
-def get_salary_statistics(name):
+def predict_salary(salary_from, salary_to):
+    if salary_from and salary_to:
+        expected_salary = (salary_from + salary_to) / 2
+    if not salary_from:
+        expected_salary = salary_to * 0.8
+    if not salary_to:
+        expected_salary = salary_from * 1.2
+    return expected_salary
+
+
+def predict_rub_salary_hh(vacancy):
+    salary_response = requests.get(base_url)
+
+
+
+
+
+def salary_info_per_language(name):
     page = 0
-    salary_info_dict = {}
     total_number = 0
     processed_count = 0
     average_list = []
@@ -34,12 +50,7 @@ def get_salary_statistics(name):
                 continue
             salary_from = salary["from"]
             salary_to = salary["to"]
-            if salary_from and salary_to:
-                expected_salary = (salary_from + salary_to) / 2
-            if not salary_from:
-                expected_salary = salary_to * 0.8
-            if not salary_to:
-                expected_salary = salary_from * 1.2
+            expected_salary = predict_salary(salary_from, salary_to)
             average_list.append(expected_salary)
             processed_count += 1
             elements_sum = 0
@@ -55,5 +66,5 @@ def get_salary_statistics(name):
 
 result_languages_salary = {}
 for language in languages_list:
-    result_languages_salary[language] = get_salary_statistics(language)
+    result_languages_salary[language] = salary_info_per_language(language)
 print(result_languages_salary)

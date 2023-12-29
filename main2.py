@@ -1,9 +1,13 @@
-from pprint import pprint
-
+import os
+from dotenv import load_dotenv
 import requests
 
 languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
-base_url = "https://api.hh.ru/vacancies"
+hh_base_url = "https://api.hh.ru/vacancies"
+sj_base_url = "https://api.superjob.ru/2.0/vacancies"
+
+load_dotenv()
+token = os.environ["SUPERJOB_TOKEN"]
 
 
 def predict_salary(salary_from, salary_to):
@@ -27,11 +31,10 @@ def predict_rub_salary_hh(vacancy):
 
 
 def predict_rub_salary_sj(vacancy):
-    salary_sj = vacancy["objects"]
-    if not salary_sj:
-        return None
     salary_sj_from = vacancy["payment_from"]
     salary_sj_to = vacancy["payment_to"]
+    if salary_sj_from and salary_sj_to == 0:
+        return None
     expected_sj_salary = predict_salary(salary_sj_from, salary_sj_to)
     return expected_sj_salary
 
@@ -46,7 +49,7 @@ def salary_info_per_language_hh(name):
                   "text": name,
                   "page": page,
                   "per_page": 100}
-        language_response = requests.get(base_url, params=params)
+        language_response = requests.get(hh_base_url, params=params)
         if language_response.status_code != 200:
             break
         vacancies = language_response.json()
@@ -73,7 +76,55 @@ def salary_info_per_language_hh(name):
     return salary_info
 
 
-result_languages_salary = {}
+# result_languages_salary = {}
+# for language in languages_list:
+#     result_languages_salary[language] = salary_info_per_language_hh(language)
+# print(result_languages_salary)
+
+
+def salary_info_per_language_sj(name):
+    page = 0
+    total_number = 0
+    processed_count = 0
+    average_list = []
+    while True:
+        headers = {"X-Api-App-Id": token}
+        params = {
+            "town": 4,
+            "catalogues": 33,
+            "keyword": name,
+            "page": page,
+            "count": 50
+        }
+        language_response = requests.get(sj_base_url, headers=headers, params=params)
+        if language_response.status_code != 200:
+            break
+        vacancies = language_response.json()
+        list_vacancies = vacancies["objects"]
+        number_of_vacancies = len(list_vacancies)
+        if number_of_vacancies == 0:
+            break
+        total_number = total_number + number_of_vacancies
+        page += 1
+        for vacancy in list_vacancies:
+            expected_salary = predict_rub_salary_sj(vacancy)
+            if expected_salary is None:
+                continue
+            average_list.append(expected_salary)
+            processed_count += 1
+            elements_sum = 0
+            for element in average_list:
+                elements_sum += element
+    average_salary = int(elements_sum / len(average_list))
+    salary_info = {"vacancies_found": total_number,
+                   "vacancies_processed": processed_count,
+                   "average_salary": average_salary
+                   }
+    return salary_info
+
+print(salary_info_per_language_sj("JavaScript"))
+
+sj_languages_salary = {}
 for language in languages_list:
-    result_languages_salary[language] = salary_info_per_language_hh(language)
-print(result_languages_salary)
+    sj_languages_salary[language] = salary_info_per_language_sj(language)
+print(sj_languages_salary)

@@ -18,24 +18,24 @@ def predict_salary(salary_from, salary_to):
     return expected_salary
 
 
-def predict_rub_salary_sj(vacancy):
-    headers = {"X-Api-App-Id": token}
-    params = {
-        "town": 4,
-        "catalogues": 33}
-    response = requests.get(url, headers=headers, params=params)
-    salary_data = response.json()
-    salary = salary_data["objects"]
-    if not salary:
-        return None
-    for vacancy in salary:
-        salary_from = vacancy["payment_from"]
-        salary_to = vacancy["payment_to"]
-        expected_salary = int(predict_salary(salary_from, salary_to))
-    return expected_salary
-    # objects =
-    # for item in objects:
-    #     print(item["profession"]+",", item["town"]["title"])
 
+headers = {"X-Api-App-Id": token}
+params = {
+    "town": 4,
+    "catalogues": 33}
+response = requests.get(url, headers=headers, params=params)
+salary_data = response.json()
+pprint(salary_data)
+salary = salary_data["objects"]
+print(salary)
+if not salary:
+    print(None)
+for vacancy in salary:
+    salary_from = vacancy["payment_from"]
+    salary_to = vacancy["payment_to"]
+    expected_salary = int(predict_salary(salary_from, salary_to))
+# return expected_salary
+# objects =
+# for item in objects:
+#     print(item["profession"]+",", item["town"]["title"])
 
-print(predict_rub_salary_sj(1))

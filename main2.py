@@ -65,9 +65,9 @@ def salary_info_per_language_hh(name):
                 continue
             average_list.append(expected_salary)
             processed_count += 1
-            elements_sum = 0
-            for element in average_list:
-                elements_sum += element
+    elements_sum = 0
+    for element in average_list:
+        elements_sum += element
     average_salary = int(elements_sum / len(average_list))
     salary_info = {"vacancies_found": total_number,
                    "vacancies_processed": processed_count,
@@ -112,9 +112,14 @@ def salary_info_per_language_sj(name):
                 continue
             average_list.append(expected_salary)
             processed_count += 1
-            elements_sum = 0
-            for element in average_list:
-                elements_sum += element
+    elements_sum = 0
+    if not average_list:
+        return {"vacancies_found": 0,
+                "vacancies_processed": 0,
+                "average_salary": None
+                }
+    for element in average_list:
+        elements_sum += element
     average_salary = int(elements_sum / len(average_list))
     salary_info = {"vacancies_found": total_number,
                    "vacancies_processed": processed_count,
@@ -122,7 +127,6 @@ def salary_info_per_language_sj(name):
                    }
     return salary_info
 
-print(salary_info_per_language_sj("JavaScript"))
 
 sj_languages_salary = {}
 for language in languages_list:

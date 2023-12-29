@@ -11,6 +11,7 @@ token = os.environ["SUPERJOB_TOKEN"]
 
 
 def predict_salary(salary_from, salary_to):
+    expected_salary = 0
     if salary_from and salary_to:
         expected_salary = (salary_from + salary_to) / 2
     if not salary_from:
@@ -33,7 +34,7 @@ def predict_rub_salary_hh(vacancy):
 def predict_rub_salary_sj(vacancy):
     salary_sj_from = vacancy["payment_from"]
     salary_sj_to = vacancy["payment_to"]
-    if salary_sj_from and salary_sj_to == 0:
+    if salary_sj_from == 0 and salary_sj_to == 0:
         return None
     expected_sj_salary = predict_salary(salary_sj_from, salary_sj_to)
     return expected_sj_salary
@@ -114,7 +115,7 @@ def salary_info_per_language_sj(name):
             processed_count += 1
     elements_sum = 0
     if not average_list:
-        return {"vacancies_found": 0,
+        return {"vacancies_found": total_number,
                 "vacancies_processed": 0,
                 "average_salary": None
                 }
@@ -127,8 +128,10 @@ def salary_info_per_language_sj(name):
                    }
     return salary_info
 
+print(salary_info_per_language_sj("Java"))
 
 sj_languages_salary = {}
 for language in languages_list:
     sj_languages_salary[language] = salary_info_per_language_sj(language)
+    print(sj_languages_salary)
 print(sj_languages_salary)

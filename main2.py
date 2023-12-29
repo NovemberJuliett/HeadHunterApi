@@ -17,18 +17,30 @@ def predict_salary(salary_from, salary_to):
 
 
 def predict_rub_salary_hh(vacancy):
-    salary_response = requests.get(base_url)
+    salary_hh = vacancy["salary"]
+    if not salary_hh:
+        return None
+    salary_hh_from = salary_hh["from"]
+    salary_hh_to = salary_hh["to"]
+    expected_hh_salary = predict_salary(salary_hh_from, salary_hh_to)
+    return expected_hh_salary
 
 
+def predict_rub_salary_sj(vacancy):
+    salary_sj = vacancy["objects"]
+    if not salary_sj:
+        return None
+    salary_sj_from = vacancy["payment_from"]
+    salary_sj_to = vacancy["payment_to"]
+    expected_sj_salary = predict_salary(salary_sj_from, salary_sj_to)
+    return expected_sj_salary
 
 
-
-def salary_info_per_language(name):
+def salary_info_per_language_hh(name):
     page = 0
     total_number = 0
     processed_count = 0
     average_list = []
-
     while True:
         params = {"area": "1",
                   "text": name,
@@ -45,12 +57,9 @@ def salary_info_per_language(name):
         total_number = total_number + number_of_vacancies
         page += 1
         for vacancy in list_vacancies:
-            salary = vacancy["salary"]
-            if not salary:
+            expected_salary = predict_rub_salary_hh(vacancy)
+            if expected_salary is None:
                 continue
-            salary_from = salary["from"]
-            salary_to = salary["to"]
-            expected_salary = predict_salary(salary_from, salary_to)
             average_list.append(expected_salary)
             processed_count += 1
             elements_sum = 0
@@ -66,5 +75,5 @@ def salary_info_per_language(name):
 
 result_languages_salary = {}
 for language in languages_list:
-    result_languages_salary[language] = salary_info_per_language(language)
+    result_languages_salary[language] = salary_info_per_language_hh(language)
 print(result_languages_salary)

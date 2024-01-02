@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
-from terminaltables import AsciiTable, DoubleTable, SingleTable
+from terminaltables import AsciiTable
 
 languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
 hh_base_url = "https://api.hh.ru/vacancies"
@@ -78,11 +78,6 @@ def salary_info_per_language_hh(name):
     return salary_info
 
 
-hh_languages_salary = {}
-for language in languages_list:
-    hh_languages_salary[language] = salary_info_per_language_hh(language)
-
-
 def salary_info_per_language_sj(name):
     page = 0
     total_number = 0
@@ -129,11 +124,6 @@ def salary_info_per_language_sj(name):
     return salary_info
 
 
-sj_languages_salary = {}
-for language in languages_list:
-    sj_languages_salary[language] = salary_info_per_language_sj(language)
-
-
 def sj_table_statistics(sj_languages_salary):
     list_for_table = []
     table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
@@ -154,4 +144,19 @@ def hh_table_statistics(hh_languages_salary):
     title = "HeadHunter Moscow"
     table_instance = AsciiTable(list_for_table, title)
     return table_instance.table
+
+
+def main():
+    hh_languages_salary = {}
+    for language in languages_list:
+        hh_languages_salary[language] = salary_info_per_language_hh(language)
+    sj_languages_salary = {}
+    for language in languages_list:
+        sj_languages_salary[language] = salary_info_per_language_sj(language)
+    print(hh_table_statistics(hh_languages_salary))
+    print(sj_table_statistics(sj_languages_salary))
+
+
+if __name__ == '__main__':
+    main()
 

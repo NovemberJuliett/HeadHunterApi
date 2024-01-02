@@ -78,9 +78,9 @@ def salary_info_per_language_hh(name):
     return salary_info
 
 
-# hh_languages_salary = {}
-# for language in languages_list:
-#     hh_languages_salary[language] = salary_info_per_language_hh(language)
+hh_languages_salary = {}
+for language in languages_list:
+    hh_languages_salary[language] = salary_info_per_language_hh(language)
 
 
 def salary_info_per_language_sj(name):
@@ -129,48 +129,29 @@ def salary_info_per_language_sj(name):
     return salary_info
 
 
-# sj_languages_salary = {}
-# for language in languages_list:
-#     sj_languages_salary[language] = salary_info_per_language_sj(language)
-# # print(sj_languages_salary)
-
-test_dict = {"Python": {"vacancies_found": 2, "vacancies_processed": 5, "average_salary": 40000},
-             "Java": {"vacancies_found": 5, "vacancies_processed": 7, "average_salary": 70000}}
-
-TABLE_DATA = [
-    ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"],
-    ["Python", 2, 3, 40000],
-    ["Java", 5, 6, 70000]
-]
-
-TABLE_DATA_2 = [
-    ["Язык программирования"],
-    ["Python"],
-    ["Java"]
-]
-
-TABLE_DATA_3 = [
-    ["Язык программирования","Вакансий найдено"],
-    ["Python", 2],
-    ["Java", 5]
-]
+sj_languages_salary = {}
+for language in languages_list:
+    sj_languages_salary[language] = salary_info_per_language_sj(language)
 
 
-def get_list(salary_info):
-    list = []
-    table = ["Язык программирования", "Вакансий найдено"]
-    list.append(table)
-    for key, value in salary_info.items():
-        list.append([key, value["vacancies_found"]])
-    return list
+def sj_table_statistics(sj_languages_salary):
+    list_for_table = []
+    table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
+    list_for_table.append(table_header)
+    for key, value in sj_languages_salary.items():
+        list_for_table.append([key, value["vacancies_found"], value["vacancies_processed"], value["average_salary"]])
+    title = "SuperJob Moscow"
+    table_instance = AsciiTable(list_for_table, title)
+    return table_instance.table
 
-print(get_list(test_dict))
 
-
-# def sj_table_statistics():
-#     title = "SuperJob Moscow"
-#     table_instance = AsciiTable(TABLE_DATA_3, title)
-#     return table_instance.table
-#
-# print(sj_table_statistics())
+def hh_table_statistics(hh_languages_salary):
+    list_for_table = []
+    table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
+    list_for_table.append(table_header)
+    for key, value in hh_languages_salary.items():
+        list_for_table.append([key, value["vacancies_found"], value["vacancies_processed"], value["average_salary"]])
+    title = "HeadHunter Moscow"
+    table_instance = AsciiTable(list_for_table, title)
+    return table_instance.table
 

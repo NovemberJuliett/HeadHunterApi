@@ -155,12 +155,14 @@ TABLE_DATA_3 = [
     ["Java", 5]
 ]
 
-def get_list(salary_info):
-    table = ["Язык программирования"]
-    for key in salary_info:
-        table.append([key])
-    return table
 
+def get_list(salary_info):
+    list = []
+    table = ["Язык программирования", "Вакансий найдено"]
+    list.append(table)
+    for key, value in salary_info.items():
+        list.append([key, value["vacancies_found"]])
+    return list
 
 print(get_list(test_dict))
 

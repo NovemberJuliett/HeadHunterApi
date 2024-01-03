@@ -7,9 +7,6 @@ languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go",
 hh_base_url = "https://api.hh.ru/vacancies"
 sj_base_url = "https://api.superjob.ru/2.0/vacancies"
 
-load_dotenv()
-token = os.environ["SUPERJOB_TOKEN"]
-
 
 def predict_salary(salary_from, salary_to):
     expected_salary = 0
@@ -78,7 +75,7 @@ def salary_info_per_language_hh(name):
     return salary_info
 
 
-def salary_info_per_language_sj(name):
+def salary_info_per_language_sj(name, token):
     page = 0
     total_number = 0
     processed_count = 0
@@ -147,12 +144,14 @@ def hh_table_statistics(hh_languages_salary):
 
 
 def main():
+    load_dotenv()
+    token = os.environ["SUPERJOB_TOKEN"]
     hh_languages_salary = {}
     for language in languages_list:
         hh_languages_salary[language] = salary_info_per_language_hh(language)
     sj_languages_salary = {}
     for language in languages_list:
-        sj_languages_salary[language] = salary_info_per_language_sj(language)
+        sj_languages_salary[language] = salary_info_per_language_sj(language, token)
     print(hh_table_statistics(hh_languages_salary))
     print(sj_table_statistics(sj_languages_salary))
 

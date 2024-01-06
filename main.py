@@ -40,36 +40,36 @@ def predict_rub_salary_sj(vacancy):
 
 def get_salary_per_language_hh(name):
     page = 0
-    total_number = 0
     processed_count = 0
     average_salary = []
     moscow_id = "1"
-    limit_of_pages = 100
+    limit_per_page = 50
+    vacancies_count = 0
     while True:
         params = {"area": moscow_id,
                   "text": name,
                   "page": page,
-                  "per_page": limit_of_pages}
+                  "per_page": limit_per_page}
         language_response = requests.get(HH_BASE_URL, params=params)
         language_response.raise_for_status()
-        vacancies_info = language_response.json()
-        vacancies = vacancies_info["items"]
-        number_of_vacancies = len(vacancies)
-        if number_of_vacancies == 0:
+        vacancies = language_response.json()
+        vacancies_count += len(vacancies["items"])
+        if vacancies_count >= 2000:
             break
-        total_number = total_number + number_of_vacancies
         page += 1
-        for vacancy in vacancies:
+        for vacancy in vacancies["items"]:
             expected_salary = predict_rub_salary_hh(vacancy)
             if expected_salary is None:
                 continue
             average_salary.append(expected_salary)
             processed_count += 1
+    number_of_vacancies = vacancies["found"]
+    print(number_of_vacancies)
     elements_sum = 0
     for element in average_salary:
         elements_sum += element
     average_salary = int(elements_sum / len(average_salary))
-    salary_info = {"vacancies_found": total_number,
+    salary_info = {"vacancies_found": number_of_vacancies,
                    "vacancies_processed": processed_count,
                    "average_salary": average_salary
                    }
@@ -83,7 +83,7 @@ def get_salary_per_language_sj(name, token):
     average_list = []
     moscow_id = 4
     profession_id = 33
-    limit_of_pages = 50
+    limit_per_page = 50
     while True:
         headers = {"X-Api-App-Id": token}
         params = {
@@ -91,11 +91,12 @@ def get_salary_per_language_sj(name, token):
             "catalogues": profession_id,
             "keyword": name,
             "page": page,
-            "count": limit_of_pages
+            "count": limit_per_page
         }
         language_response = requests.get(SJ_BASE_URL, headers=headers, params=params)
         language_response.raise_for_status()
         vacancies = language_response.json()
+        # print(vacancies)
         list_vacancies = vacancies["objects"]
         number_of_vacancies = len(list_vacancies)
         if number_of_vacancies == 0:
@@ -155,8 +156,8 @@ def main():
     sj_languages_salary = {}
     for language in PROGRAMMING_LANGUAGES:
         sj_languages_salary[language] = get_salary_per_language_sj(language, token)
-    print(get_hh_table_statistics(hh_languages_salary))
-    print(get_sj_table_statistics(sj_languages_salary))
+    # print(get_hh_table_statistics(hh_languages_salary))
+    # print(get_sj_table_statistics(sj_languages_salary))
 
 
 if __name__ == '__main__':

@@ -51,8 +51,7 @@ def get_salary_per_language_hh(name):
                   "page": page,
                   "per_page": limit_of_pages}
         language_response = requests.get(HH_BASE_URL, params=params)
-        if language_response.status_code != 200:
-            break
+        language_response.raise_for_status()
         vacancies_info = language_response.json()
         vacancies = vacancies_info["items"]
         number_of_vacancies = len(vacancies)
@@ -95,8 +94,7 @@ def get_salary_per_language_sj(name, token):
             "count": limit_of_pages
         }
         language_response = requests.get(SJ_BASE_URL, headers=headers, params=params)
-        if language_response.status_code != 200:
-            break
+        language_response.raise_for_status()
         vacancies = language_response.json()
         list_vacancies = vacancies["objects"]
         number_of_vacancies = len(list_vacancies)

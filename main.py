@@ -38,16 +38,18 @@ def predict_rub_salary_sj(vacancy):
     return expected_sj_salary
 
 
-def salary_info_per_language_hh(name):
+def get_salary_per_language_hh(name):
     page = 0
     total_number = 0
     processed_count = 0
     average_salary = []
+    moscow_id = "1"
+    limit_of_pages = 100
     while True:
-        params = {"area": "1",
+        params = {"area": moscow_id,
                   "text": name,
                   "page": page,
-                  "per_page": 100}
+                  "per_page": limit_of_pages}
         language_response = requests.get(HH_BASE_URL, params=params)
         if language_response.status_code != 200:
             break
@@ -75,19 +77,22 @@ def salary_info_per_language_hh(name):
     return salary_info
 
 
-def salary_info_per_language_sj(name, token):
+def get_salary_per_language_sj(name, token):
     page = 0
     total_number = 0
     processed_count = 0
     average_list = []
+    moscow_id = 4
+    profession_id = 33
+    limit_of_pages = 50
     while True:
         headers = {"X-Api-App-Id": token}
         params = {
-            "town": 4,
-            "catalogues": 33,
+            "town": moscow_id,
+            "catalogues": profession_id,
             "keyword": name,
             "page": page,
-            "count": 50
+            "count": limit_of_pages
         }
         language_response = requests.get(SJ_BASE_URL, headers=headers, params=params)
         if language_response.status_code != 200:
@@ -121,7 +126,7 @@ def salary_info_per_language_sj(name, token):
     return salary_info
 
 
-def sj_table_statistics(sj_languages_salary):
+def get_sj_table_statistics(sj_languages_salary):
     list_for_table = []
     table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
     list_for_table.append(table_header)
@@ -132,7 +137,7 @@ def sj_table_statistics(sj_languages_salary):
     return table_instance.table
 
 
-def hh_table_statistics(hh_languages_salary):
+def get_hh_table_statistics(hh_languages_salary):
     list_for_table = []
     table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
     list_for_table.append(table_header)
@@ -145,15 +150,15 @@ def hh_table_statistics(hh_languages_salary):
 
 def main():
     load_dotenv()
-    token = os.environ["SUPERJOB_TOKEN"]
+    token = os.environ["SUPERJOB_API_KEY"]
     hh_languages_salary = {}
     for language in PROGRAMMING_LANGUAGES:
-        hh_languages_salary[language] = salary_info_per_language_hh(language)
+        hh_languages_salary[language] = get_salary_per_language_hh(language)
     sj_languages_salary = {}
     for language in PROGRAMMING_LANGUAGES:
-        sj_languages_salary[language] = salary_info_per_language_sj(language, token)
-    print(hh_table_statistics(hh_languages_salary))
-    print(sj_table_statistics(sj_languages_salary))
+        sj_languages_salary[language] = get_salary_per_language_sj(language, token)
+    print(get_hh_table_statistics(hh_languages_salary))
+    print(get_sj_table_statistics(sj_languages_salary))
 
 
 if __name__ == '__main__':

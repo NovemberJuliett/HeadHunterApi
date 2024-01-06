@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 import requests
 from terminaltables import AsciiTable
 
-languages_list = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
-hh_base_url = "https://api.hh.ru/vacancies"
-sj_base_url = "https://api.superjob.ru/2.0/vacancies"
+PROGRAMMING_LANGUAGES = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
+HH_BASE_URL = "https://api.hh.ru/vacancies"
+SJ_BASE_URL = "https://api.superjob.ru/2.0/vacancies"
 
 
 def predict_salary(salary_from, salary_to):
@@ -42,32 +42,32 @@ def salary_info_per_language_hh(name):
     page = 0
     total_number = 0
     processed_count = 0
-    average_list = []
+    average_salary = []
     while True:
         params = {"area": "1",
                   "text": name,
                   "page": page,
                   "per_page": 100}
-        language_response = requests.get(hh_base_url, params=params)
+        language_response = requests.get(HH_BASE_URL, params=params)
         if language_response.status_code != 200:
             break
-        vacancies = language_response.json()
-        list_vacancies = vacancies["items"]
-        number_of_vacancies = len(list_vacancies)
+        vacancies_info = language_response.json()
+        vacancies = vacancies_info["items"]
+        number_of_vacancies = len(vacancies)
         if number_of_vacancies == 0:
             break
         total_number = total_number + number_of_vacancies
         page += 1
-        for vacancy in list_vacancies:
+        for vacancy in vacancies:
             expected_salary = predict_rub_salary_hh(vacancy)
             if expected_salary is None:
                 continue
-            average_list.append(expected_salary)
+            average_salary.append(expected_salary)
             processed_count += 1
     elements_sum = 0
-    for element in average_list:
+    for element in average_salary:
         elements_sum += element
-    average_salary = int(elements_sum / len(average_list))
+    average_salary = int(elements_sum / len(average_salary))
     salary_info = {"vacancies_found": total_number,
                    "vacancies_processed": processed_count,
                    "average_salary": average_salary
@@ -89,7 +89,7 @@ def salary_info_per_language_sj(name, token):
             "page": page,
             "count": 50
         }
-        language_response = requests.get(sj_base_url, headers=headers, params=params)
+        language_response = requests.get(SJ_BASE_URL, headers=headers, params=params)
         if language_response.status_code != 200:
             break
         vacancies = language_response.json()
@@ -147,10 +147,10 @@ def main():
     load_dotenv()
     token = os.environ["SUPERJOB_TOKEN"]
     hh_languages_salary = {}
-    for language in languages_list:
+    for language in PROGRAMMING_LANGUAGES:
         hh_languages_salary[language] = salary_info_per_language_hh(language)
     sj_languages_salary = {}
-    for language in languages_list:
+    for language in PROGRAMMING_LANGUAGES:
         sj_languages_salary[language] = salary_info_per_language_sj(language, token)
     print(hh_table_statistics(hh_languages_salary))
     print(sj_table_statistics(sj_languages_salary))

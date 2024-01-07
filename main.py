@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 import requests
 from terminaltables import AsciiTable
 
-PROGRAMMING_LANGUAGES = ["JavaScript", "Java", "Python", "PHP", "C++", "C#", "C", "Go", "Shell"]
+PROGRAMMING_LANGUAGES = ["JavaScript", "Java", "Python", "PHP",
+                         "C++", "C#", "C", "Go", "Shell"]
 HH_BASE_URL = "https://api.hh.ru/vacancies"
 SJ_BASE_URL = "https://api.superjob.ru/2.0/vacancies"
 
@@ -85,9 +86,9 @@ def get_salary_per_language_sj(name, token):
             "catalogues": profession_id,
             "keyword": name,
             "page": page,
-            "count": limit_per_page
-        }
-        language_response = requests.get(SJ_BASE_URL, headers=headers, params=params)
+            "count": limit_per_page}
+        language_response = requests.get(SJ_BASE_URL,
+                                         headers=headers, params=params)
         language_response.raise_for_status()
         vacancies = language_response.json()
         number_of_vacancies = vacancies["total"]
@@ -116,10 +117,13 @@ def get_salary_per_language_sj(name, token):
 
 def get_sj_table_statistics(sj_languages_salary):
     list_for_table = []
-    table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
+    table_header = ["Язык программирования", "Вакансий найдено",
+                    "Вакансий обработано", "Средняя зарплата"]
     list_for_table.append(table_header)
     for key, value in sj_languages_salary.items():
-        list_for_table.append([key, value["vacancies_found"], value["vacancies_processed"], value["average_salary"]])
+        list_for_table.append([key, value["vacancies_found"],
+                               value["vacancies_processed"],
+                               value["average_salary"]])
     title = "SuperJob Moscow"
     table_instance = AsciiTable(list_for_table, title)
     return table_instance.table
@@ -127,10 +131,13 @@ def get_sj_table_statistics(sj_languages_salary):
 
 def get_hh_table_statistics(hh_languages_salary):
     list_for_table = []
-    table_header = ["Язык программирования", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]
+    table_header = ["Язык программирования", "Вакансий найдено",
+                    "Вакансий обработано", "Средняя зарплата"]
     list_for_table.append(table_header)
     for key, value in hh_languages_salary.items():
-        list_for_table.append([key, value["vacancies_found"], value["vacancies_processed"], value["average_salary"]])
+        list_for_table.append([key, value["vacancies_found"],
+                               value["vacancies_processed"],
+                               value["average_salary"]])
     title = "HeadHunter Moscow"
     table_instance = AsciiTable(list_for_table, title)
     return table_instance.table
@@ -144,7 +151,8 @@ def main():
         hh_languages_salary[language] = get_salary_per_language_hh(language)
     sj_languages_salary = {}
     for language in PROGRAMMING_LANGUAGES:
-        sj_languages_salary[language] = get_salary_per_language_sj(language, token)
+        sj_languages_salary[language] = get_salary_per_language_sj(
+            language, token)
     # print(get_hh_table_statistics(hh_languages_salary))
     # print(get_sj_table_statistics(sj_languages_salary))
 

@@ -32,7 +32,7 @@ def predict_rub_salary_hh(vacancy):
 def predict_rub_salary_sj(vacancy):
     salary_sj_from = vacancy["payment_from"]
     salary_sj_to = vacancy["payment_to"]
-    if salary_sj_from == 0 and salary_sj_to == 0:
+    if not salary_sj_from and not salary_sj_to:
         return None
     expected_sj_salary = predict_salary(salary_sj_from, salary_sj_to)
     return expected_sj_salary
@@ -65,11 +65,11 @@ def get_salary_per_language_hh(name):
     if salaries:
         elements_sum = sum(salaries)
         average_salary = int(elements_sum / len(salaries))
-        salary_info = {"vacancies_found": number_of_vacancies,
-                       "vacancies_processed": len(salaries),
-                       "average_salary": average_salary
-                       }
-        return salary_info
+        salary_statistics = {"vacancies_found": number_of_vacancies,
+                             "vacancies_processed": len(salaries),
+                             "average_salary": average_salary
+                             }
+        return salary_statistics
 
 
 def get_salary_per_language_sj(name, token):
@@ -107,11 +107,11 @@ def get_salary_per_language_sj(name, token):
     if salaries:
         elements_sum = sum(salaries)
         average_salary = int(elements_sum / len(salaries))
-        salary_info = {"vacancies_found": number_of_vacancies,
-                       "vacancies_processed": len(salaries),
-                       "average_salary": average_salary
-                       }
-        return salary_info
+        salary_statistics = {"vacancies_found": number_of_vacancies,
+                             "vacancies_processed": len(salaries),
+                             "average_salary": average_salary
+                             }
+        return salary_statistics
 
 
 def get_sj_table_statistics(sj_languages_salary):

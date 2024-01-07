@@ -40,8 +40,7 @@ def predict_rub_salary_sj(vacancy):
 
 def get_salary_per_language_hh(name):
     page = 0
-    processed_count = 0
-    average_salary = []
+    salaries = []
     moscow_id = "1"
     limit_per_page = 50
     vacancies_count = 0
@@ -59,17 +58,16 @@ def get_salary_per_language_hh(name):
             expected_salary = predict_rub_salary_hh(vacancy)
             if not expected_salary:
                 continue
-            average_salary.append(expected_salary)
-            processed_count += 1
+            salaries.append(expected_salary)
         if vacancies_count >= 2000 or not vacancies["items"]:
             break
     number_of_vacancies = vacancies["found"]
     elements_sum = 0
-    for element in average_salary:
+    for element in salaries:
         elements_sum += element
-    average_salary = int(elements_sum / len(average_salary))
+    average_salary = int(elements_sum / len(salaries))
     salary_info = {"vacancies_found": number_of_vacancies,
-                   "vacancies_processed": processed_count,
+                   "vacancies_processed": len(salaries),
                    "average_salary": average_salary
                    }
     return salary_info
@@ -77,8 +75,7 @@ def get_salary_per_language_hh(name):
 
 def get_salary_per_language_sj(name, token):
     page = 0
-    processed_count = 0
-    average_list = []
+    salaries = []
     moscow_id = 4
     profession_id = 33
     limit_per_page = 50
@@ -102,19 +99,18 @@ def get_salary_per_language_sj(name, token):
             expected_salary = predict_rub_salary_sj(vacancy)
             if not expected_salary:
                 continue
-            average_list.append(expected_salary)
-            processed_count += 1
+            salaries.append(expected_salary)
     elements_sum = 0
-    if not average_list:
+    if not salaries:
         return {"vacancies_found": number_of_vacancies,
                 "vacancies_processed": 0,
                 "average_salary": None
                 }
-    for element in average_list:
+    for element in salaries:
         elements_sum += element
-    average_salary = int(elements_sum / len(average_list))
+    average_salary = int(elements_sum / len(salaries))
     salary_info = {"vacancies_found": number_of_vacancies,
-                   "vacancies_processed": processed_count,
+                   "vacancies_processed": len(salaries),
                    "average_salary": average_salary
                    }
     return salary_info

@@ -62,13 +62,14 @@ def get_salary_per_language_hh(name):
         if vacancies_count >= 2000 or not vacancies["items"]:
             break
     number_of_vacancies = vacancies["found"]
-    elements_sum = sum(salaries)
-    average_salary = int(elements_sum / len(salaries))
-    salary_info = {"vacancies_found": number_of_vacancies,
-                   "vacancies_processed": len(salaries),
-                   "average_salary": average_salary
-                   }
-    return salary_info
+    if salaries:
+        elements_sum = sum(salaries)
+        average_salary = int(elements_sum / len(salaries))
+        salary_info = {"vacancies_found": number_of_vacancies,
+                       "vacancies_processed": len(salaries),
+                       "average_salary": average_salary
+                       }
+        return salary_info
 
 
 def get_salary_per_language_sj(name, token):
@@ -98,19 +99,19 @@ def get_salary_per_language_sj(name, token):
             if not expected_salary:
                 continue
             salaries.append(expected_salary)
-    elements_sum = 0
     if not salaries:
         return {"vacancies_found": number_of_vacancies,
                 "vacancies_processed": 0,
                 "average_salary": None
                 }
-    elements_sum = sum(salaries)
-    average_salary = int(elements_sum / len(salaries))
-    salary_info = {"vacancies_found": number_of_vacancies,
-                   "vacancies_processed": len(salaries),
-                   "average_salary": average_salary
-                   }
-    return salary_info
+    if salaries:
+        elements_sum = sum(salaries)
+        average_salary = int(elements_sum / len(salaries))
+        salary_info = {"vacancies_found": number_of_vacancies,
+                       "vacancies_processed": len(salaries),
+                       "average_salary": average_salary
+                       }
+        return salary_info
 
 
 def get_sj_table_statistics(sj_languages_salary):
@@ -150,4 +151,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

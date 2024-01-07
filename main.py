@@ -62,9 +62,7 @@ def get_salary_per_language_hh(name):
         if vacancies_count >= 2000 or not vacancies["items"]:
             break
     number_of_vacancies = vacancies["found"]
-    elements_sum = 0
-    for element in salaries:
-        elements_sum += element
+    elements_sum = sum(salaries)
     average_salary = int(elements_sum / len(salaries))
     salary_info = {"vacancies_found": number_of_vacancies,
                    "vacancies_processed": len(salaries),
@@ -106,8 +104,7 @@ def get_salary_per_language_sj(name, token):
                 "vacancies_processed": 0,
                 "average_salary": None
                 }
-    for element in salaries:
-        elements_sum += element
+    elements_sum = sum(salaries)
     average_salary = int(elements_sum / len(salaries))
     salary_info = {"vacancies_found": number_of_vacancies,
                    "vacancies_processed": len(salaries),

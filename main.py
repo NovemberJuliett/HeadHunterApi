@@ -129,8 +129,8 @@ def main():
     for language in PROGRAMMING_LANGUAGES:
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
-    print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
-    print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
+    get_table_statistics(hh_languages_salary, "HeadHunter Moscow")
+    get_table_statistics(sj_languages_salary, "SuperJob Moscow")
 
 
 if __name__ == '__main__':

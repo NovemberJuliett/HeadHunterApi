@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 import requests
-from terminaltables import AsciiTable
+from get_table_statistics import get_table_statistics
+
 
 PROGRAMMING_LANGUAGES = ["JavaScript", "Java", "Python", "PHP",
                          "C++", "C#", "C", "Go", "Shell"]
@@ -118,19 +119,6 @@ def get_salary_per_language_sj(name, token):
         return salary_statistics
 
 
-def get_table_statistics(languages_salary, title):
-    list_for_table = []
-    table_header = ["Язык программирования", "Вакансий найдено",
-                    "Вакансий обработано", "Средняя зарплата"]
-    list_for_table.append(table_header)
-    for key, value in languages_salary.items():
-        list_for_table.append([key, value["vacancies_found"],
-                               value["vacancies_processed"],
-                               value["average_salary"]])
-    table_instance = AsciiTable(list_for_table, title)
-    return table_instance.table
-
-
 def main():
     load_dotenv()
     token = os.environ["SUPERJOB_API_KEY"]
@@ -142,8 +130,7 @@ def main():
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
     print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
-    # print(get_hh_table_statistics(hh_languages_salary))
-    # print(get_sj_table_statistics(sj_languages_salary))
+    print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
 
 
 if __name__ == '__main__':

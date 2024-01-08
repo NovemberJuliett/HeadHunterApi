@@ -45,6 +45,7 @@ def get_salary_per_language_hh(name):
     moscow_id = "1"
     limit_per_page = 50
     vacancies_count = 0
+    total_number = 0
     while True:
         params = {"area": moscow_id,
                   "text": name,
@@ -54,6 +55,10 @@ def get_salary_per_language_hh(name):
         language_response.raise_for_status()
         vacancies = language_response.json()
         vacancies_count += len(vacancies["items"])
+        number_of_vacancies = vacancies["found"]
+        if not number_of_vacancies:
+            break
+        total_number = total_number + number_of_vacancies
         page += 1
         for vacancy in vacancies["items"]:
             expected_salary = predict_rub_salary_hh(vacancy)
@@ -62,11 +67,10 @@ def get_salary_per_language_hh(name):
             salaries.append(expected_salary)
         if vacancies_count >= 2000 or not vacancies["items"]:
             break
-    number_of_vacancies = vacancies["found"]
     if salaries:
         elements_sum = sum(salaries)
         average_salary = int(elements_sum / len(salaries))
-        salary_statistics = {"vacancies_found": number_of_vacancies,
+        salary_statistics = {"vacancies_found": total_number,
                              "vacancies_processed": len(salaries),
                              "average_salary": average_salary
                              }
@@ -79,6 +83,7 @@ def get_salary_per_language_sj(name, token):
     moscow_id = 4
     profession_id = 33
     limit_per_page = 50
+    total_number = 0
     while True:
         headers = {"X-Api-App-Id": token}
         params = {
@@ -94,6 +99,7 @@ def get_salary_per_language_sj(name, token):
         number_of_vacancies = vacancies["total"]
         if not number_of_vacancies:
             break
+        total_number = total_number + number_of_vacancies
         page += 1
         for vacancy in vacancies["objects"]:
             expected_salary = predict_rub_salary_sj(vacancy)
@@ -101,14 +107,14 @@ def get_salary_per_language_sj(name, token):
                 continue
             salaries.append(expected_salary)
     if not salaries:
-        return {"vacancies_found": number_of_vacancies,
+        return {"vacancies_found": total_number,
                 "vacancies_processed": 0,
                 "average_salary": None
                 }
     if salaries:
         elements_sum = sum(salaries)
         average_salary = int(elements_sum / len(salaries))
-        salary_statistics = {"vacancies_found": number_of_vacancies,
+        salary_statistics = {"vacancies_found": total_number,
                              "vacancies_processed": len(salaries),
                              "average_salary": average_salary
                              }

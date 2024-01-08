@@ -115,30 +115,15 @@ def get_salary_per_language_sj(name, token):
         return salary_statistics
 
 
-def get_sj_table_statistics(sj_languages_salary):
+def get_table_statistics(languages_salary, title):
     list_for_table = []
     table_header = ["Язык программирования", "Вакансий найдено",
                     "Вакансий обработано", "Средняя зарплата"]
     list_for_table.append(table_header)
-    for key, value in sj_languages_salary.items():
+    for key, value in languages_salary.items():
         list_for_table.append([key, value["vacancies_found"],
                                value["vacancies_processed"],
                                value["average_salary"]])
-    title = "SuperJob Moscow"
-    table_instance = AsciiTable(list_for_table, title)
-    return table_instance.table
-
-
-def get_hh_table_statistics(hh_languages_salary):
-    list_for_table = []
-    table_header = ["Язык программирования", "Вакансий найдено",
-                    "Вакансий обработано", "Средняя зарплата"]
-    list_for_table.append(table_header)
-    for key, value in hh_languages_salary.items():
-        list_for_table.append([key, value["vacancies_found"],
-                               value["vacancies_processed"],
-                               value["average_salary"]])
-    title = "HeadHunter Moscow"
     table_instance = AsciiTable(list_for_table, title)
     return table_instance.table
 
@@ -153,6 +138,7 @@ def main():
     for language in PROGRAMMING_LANGUAGES:
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
+    print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
     # print(get_hh_table_statistics(hh_languages_salary))
     # print(get_sj_table_statistics(sj_languages_salary))
 

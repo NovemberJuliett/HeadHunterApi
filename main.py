@@ -45,7 +45,6 @@ def get_salary_per_language_hh(name):
     moscow_id = "1"
     limit_per_page = 50
     vacancies_count = 0
-    total_number = 0
     while True:
         params = {"area": moscow_id,
                   "text": name,
@@ -54,11 +53,9 @@ def get_salary_per_language_hh(name):
         language_response = requests.get(HH_BASE_URL, params=params)
         language_response.raise_for_status()
         vacancies = language_response.json()
-        vacancies_count += len(vacancies["items"])
-        number_of_vacancies = vacancies["found"]
-        if not number_of_vacancies:
+        vacancies_count += vacancies["found"]
+        if not vacancies_count:
             break
-        total_number = total_number + number_of_vacancies
         page += 1
         for vacancy in vacancies["items"]:
             expected_salary = predict_rub_salary_hh(vacancy)
@@ -70,7 +67,7 @@ def get_salary_per_language_hh(name):
     if salaries:
         elements_sum = sum(salaries)
         average_salary = int(elements_sum / len(salaries))
-        salary_statistics = {"vacancies_found": total_number,
+        salary_statistics = {"vacancies_found": vacancies_count,
                              "vacancies_processed": len(salaries),
                              "average_salary": average_salary
                              }
@@ -144,7 +141,7 @@ def main():
     for language in PROGRAMMING_LANGUAGES:
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
-    print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
+    print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
     # print(get_hh_table_statistics(hh_languages_salary))
     # print(get_sj_table_statistics(sj_languages_salary))
 

@@ -93,15 +93,16 @@ def get_salary_per_language_sj(name, token):
         language_response.raise_for_status()
         vacancies = language_response.json()
         number_of_vacancies = vacancies["total"]
-        if not vacancies["more"]:
-            break
-        # page += 1
+        page += 1
         for vacancy in vacancies["objects"]:
             print(vacancy)
             expected_salary = predict_rub_salary_sj(vacancy)
             if not expected_salary:
                 continue
             salaries.append(expected_salary)
+        if not vacancies["more"]:
+            print(vacancies["more"])
+            break
     if not salaries:
         return {
             "vacancies_found": number_of_vacancies,
@@ -130,7 +131,7 @@ def main():
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
     # print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
-    get_table_statistics(sj_languages_salary, "SuperJob Moscow")
+    print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
 
 
 if __name__ == '__main__':

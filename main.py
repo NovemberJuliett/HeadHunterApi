@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
-from get_table_statistics import get_table_statistics
+from terminaltables import AsciiTable
 
 
 PROGRAMMING_LANGUAGES = ["JavaScript", "Java", "Python", "PHP",
@@ -64,7 +64,7 @@ def get_salary_per_language_hh(name):
             break
     if salaries:
         elements_sum = sum(salaries)
-        average_salary = int(elements_sum / len(salaries))
+        average_salary = int(elements_sum / len(salaries)) if len(salaries) > 0 else None
         salary_statistics = {
             "vacancies_found": vacancies["found"],
             "vacancies_processed": len(salaries),
@@ -95,42 +95,45 @@ def get_salary_per_language_sj(name, token):
         number_of_vacancies = vacancies["total"]
         page += 1
         for vacancy in vacancies["objects"]:
-            print(vacancy)
             expected_salary = predict_rub_salary_sj(vacancy)
             if not expected_salary:
                 continue
             salaries.append(expected_salary)
         if not vacancies["more"]:
-            print(vacancies["more"])
             break
-    if not salaries:
-        return {
-            "vacancies_found": number_of_vacancies,
-            "vacancies_processed": 0,
-            "average_salary": None
-        }
-    if salaries:
-        elements_sum = sum(salaries)
-        average_salary = int(elements_sum / len(salaries))
-        salary_statistics = {
-            "vacancies_found": number_of_vacancies,
-            "vacancies_processed": len(salaries),
-            "average_salary": average_salary
-        }
-        return salary_statistics
+    elements_sum = sum(salaries)
+    average_salary = int(elements_sum / len(salaries)) if len(salaries) > 0 else None
+    salary_statistics = {
+        "vacancies_found": number_of_vacancies,
+        "vacancies_processed": len(salaries),
+        "average_salary": average_salary
+    }
+    return salary_statistics
+
+
+def get_table_statistics(languages_salary, title):
+    table_content = []
+    table_header = ["Язык программирования", "Вакансий найдено",
+                    "Вакансий обработано", "Средняя зарплата"]
+    table_content.append(table_header)
+    for language, statistics in languages_salary.items():
+        table_content.append([language, statistics["vacancies_found"],
+                              statistics["vacancies_processed"],
+                              statistics["average_salary"]])
+    table_instance = AsciiTable(table_content, title)
+    return table_instance.table
 
 
 def main():
     load_dotenv()
     token = os.environ["SUPERJOB_API_KEY"]
     hh_languages_salary = {}
-    # for language in PROGRAMMING_LANGUAGES:
-    #     hh_languages_salary[language] = get_salary_per_language_hh(language)
     sj_languages_salary = {}
     for language in PROGRAMMING_LANGUAGES:
+        hh_languages_salary[language] = get_salary_per_language_hh(language)
         sj_languages_salary[language] = get_salary_per_language_sj(
             language, token)
-    # print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
+    print(get_table_statistics(hh_languages_salary, "HeadHunter Moscow"))
     print(get_table_statistics(sj_languages_salary, "SuperJob Moscow"))
 
 

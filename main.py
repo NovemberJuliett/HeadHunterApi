@@ -63,14 +63,14 @@ def get_salary_per_language_hh(name):
             salaries.append(expected_salary)
         if page == vacancies["pages"]:
             break
-        elements_sum = sum(salaries)
-        average_salary = int(elements_sum / len(salaries)) if salaries else None
-        salary_statistics = {
+    elements_sum = sum(salaries)
+    average_salary = int(elements_sum / len(salaries)) if salaries else None
+    salary_statistics = {
             "vacancies_found": vacancies["found"],
             "vacancies_processed": len(salaries),
             "average_salary": average_salary
-        }
-        return salary_statistics
+    }
+    return salary_statistics
 
 
 def get_salary_per_language_sj(name, token):

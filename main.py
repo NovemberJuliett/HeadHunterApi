@@ -46,11 +46,12 @@ def get_salary_per_language_hh(name):
     moscow_id = "1"
     limit_per_page = 50
     while True:
-        params = {"area": moscow_id,
-                  "text": name,
-                  "page": page,
-                  "per_page": limit_per_page
-                  }
+        params = {
+            "area": moscow_id,
+            "text": name,
+            "page": page,
+            "per_page": limit_per_page
+        }
         language_response = requests.get(HH_BASE_URL, params=params)
         language_response.raise_for_status()
         vacancies = language_response.json()
@@ -62,9 +63,8 @@ def get_salary_per_language_hh(name):
             salaries.append(expected_salary)
         if page == vacancies["pages"]:
             break
-    if salaries:
         elements_sum = sum(salaries)
-        average_salary = int(elements_sum / len(salaries)) if len(salaries) > 0 else None
+        average_salary = int(elements_sum / len(salaries)) if salaries else None
         salary_statistics = {
             "vacancies_found": vacancies["found"],
             "vacancies_processed": len(salaries),
@@ -92,7 +92,7 @@ def get_salary_per_language_sj(name, token):
                                          headers=headers, params=params)
         language_response.raise_for_status()
         vacancies = language_response.json()
-        number_of_vacancies = vacancies["total"]
+        vacancies_number = vacancies["total"]
         page += 1
         for vacancy in vacancies["objects"]:
             expected_salary = predict_rub_salary_sj(vacancy)
@@ -102,9 +102,9 @@ def get_salary_per_language_sj(name, token):
         if not vacancies["more"]:
             break
     elements_sum = sum(salaries)
-    average_salary = int(elements_sum / len(salaries)) if len(salaries) > 0 else None
+    average_salary = int(elements_sum / len(salaries)) if salaries else None
     salary_statistics = {
-        "vacancies_found": number_of_vacancies,
+        "vacancies_found": vacancies_number,
         "vacancies_processed": len(salaries),
         "average_salary": average_salary
     }
